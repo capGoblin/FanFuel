@@ -1,70 +1,103 @@
-Here’s a clear catalogue of every on-chain function (grouped by file) and a recommended linear “happy-path” you can showcase in the dApp demo.
+## 📄 Smart Contracts (`cadence/contracts`)
 
-────────────────────────────────────────
+### A. `MilestoneNFT.cdc`
 
-1. Smart-contracts (cadence/contracts)
-   ────────────────────────────────────────
-   A. MilestoneNFT.cdc
-   • createEmptyCollection() → @Collection
-   • mintNFT(recipient, name, description, image, royaltyReceiver, royaltyCut) → UInt64
-   • Collection implements
-    • deposit\(\) / withdraw\(\) (NFT)
-    • borrowNFT(id)
-    • borrowViewResolver(id) – enables MetadataViews
+**Public Functions**
 
-B. CampaignManager.cdc
-• createCampaign(title, description, goalAmount, milestones[], totalNFTs)
-• contributeAndMint(campaignID, paymentVault, nftRecipient)
-• getCampaigns() / getCampaign(id)
-• getNFTPriceFor(campaignID) → UFix64
+- `createEmptyCollection(): @Collection`
+- `mintNFT(recipient, name, description, image, royaltyReceiver, royaltyCut): UInt64`
 
-C. NFTStorefrontV2.cdc (stub)
-• createStorefront() → @Storefront
-  Storefront resource exposes:
- • createListing(..) – logs “Listing created (stub)”
- • purchaseListing(listingID, payment @Vault) – logs “Listing purchased (stub)”
+**Collection Resource Interface**
 
-────────────────────────────────────────
-2. User-facing transactions (cadence/transactions)
-────────────────────────────────────────
-• SetupNFTCollection.cdc – one-time collection bootstrap
-• SetupStorefront.cdc   – one-time storefront bootstrap
-• CreateCampaign.cdc    – creator mints a campaign
-• ContributeAndMint.cdc – fan pays FLOW + receives NFT
-• MintNFT.cdc           – admin/dev mint (testing)
-• CreateListing.cdc     – fan lists an owned NFT (stub)
-• PurchaseListing.cdc   – buyer purchases the listing (stub)
+- `deposit(token: @NFT)`
+- `withdraw(withdrawID: UInt64): @NFT`
+- `borrowNFT(id: UInt64): &NFT`
+- `borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver}`
 
-────────────────────────────────────────
-3. Read-only scripts (cadence/scripts)
-────────────────────────────────────────
-• GetCampaigns.cdc   – array of Campaign structs
-• GetNFTCollection.cdc – IDs in a user’s collection
-• GetNFTMetadata.cdc  – Display & Royalties views for an NFT
-• GetListings.cdc     – returns [] for now (stub placeholder)
+---
 
-────────────────────────────────────────
-4. Demo sequence for the dApp
-────────────────────────────────────────
-Below is the order you can wire into the UI or run in a live walkthrough:
+### B. `CampaignManager.cdc`
 
-Creator Journey
+**Core Campaign Functions**
 
-1. Run SetupNFTCollection (creator account) – ensures a collection exists.
-2. CreateCampaign with goal, title, etc. – UI shows “CampaignCreated” event.
-3. Use GetCampaigns to populate campaign list; show NFT price via getNFTPriceFor.
+- `createCampaign(title, description, goalAmount, milestones: [String], totalNFTs: UInt64)`
+- `contributeAndMint(campaignID: UInt64, paymentVault: @FungibleToken.Vault, nftRecipient: Address)`
+- `getCampaigns(): [Campaign]`
+- `getCampaign(id: UInt64): Campaign`
+- `getNFTPriceFor(campaignID: UInt64): UFix64`
 
-Fan Journey
-4. SetupNFTCollection (fan) – first-time only.
-5. ContributeAndMint with exact price – FLOW is withdrawn, events “ContributionReceived” & “NFTMinted” fire.
-6. Call GetNFTCollection & GetNFTMetadata to display the newly received NFT card.
+---
 
-Secondary-market Journey (stubbed)
-7. SetupStorefront (fan) – creates Storefront + publishes public capability.
-8. CreateListing with NFT id & price – logs “Listing created (stub)”.
-9. (Use GetListings once we implement real listing storage.)
-10. PurchaseListing from another account – FLOW withdrawn & “Listing purchased (stub)” log confirms call.
+### C. `NFTStorefrontV2.cdc` (Stub)
 
-That completes the loop: campaign creation → funding → NFT delivery → resale listing → purchase.
+**Storefront Lifecycle**
 
-Once the UI follows this order the demo will run end-to-end on the emulator. Future work is simply replacing the stubbed storefront with the full open-source NFTStorefrontV2 to get real listing data and events.
+- `createStorefront(): @Storefront`
+
+**Storefront Resource Functions**
+
+- `createListing(...)` → logs: _“Listing created (stub)”_
+- `purchaseListing(listingID, payment: @Vault)` → logs: _“Listing purchased (stub)”_
+
+---
+
+## 🧾 User-Facing Transactions (`cadence/transactions`)
+
+- `SetupNFTCollection.cdc` – one-time setup per user
+- `SetupStorefront.cdc` – one-time storefront setup
+- `CreateCampaign.cdc` – create new campaign
+- `ContributeAndMint.cdc` – contribute FLOW + receive NFT
+- `MintNFT.cdc` – dev-only manual mint
+- `CreateListing.cdc` – list owned NFT for resale _(stub)_
+- `PurchaseListing.cdc` – purchase listed NFT _(stub)_
+
+---
+
+## 🔍 Read-Only Scripts (`cadence/scripts`)
+
+- `GetCampaigns.cdc` – return `[Campaign]`
+- `GetNFTCollection.cdc` – return `[UInt64]` of owned NFTs
+- `GetNFTMetadata.cdc` – return MetadataViews for NFT ID
+- `GetListings.cdc` – stub placeholder, returns empty list
+
+---
+
+## 🧪 dApp Demo Sequence
+
+### 👤 Creator Journey
+
+1. **Run** `SetupNFTCollection` _(creator)_
+2. **Call** `CreateCampaign` with title, goal, milestones
+3. **Script** `GetCampaigns` → display in UI
+4. **Call** `getNFTPriceFor(campaignID)` → show contribution price
+
+### 🙋 Fan Journey
+
+5. **Run** `SetupNFTCollection` _(fan – one-time)_
+6. **Call** `ContributeAndMint` with FLOW & campaignID
+
+   🔔 Expect:
+
+   - `ContributionReceived` event
+   - `NFTMinted` event
+
+7. **Script** `GetNFTCollection` & `GetNFTMetadata` → display NFT
+
+### 🔄 Secondary Market (Stub)
+
+8. **Run** `SetupStorefront` _(fan)_
+9. **Call** `CreateListing` with NFT ID & price → log: _“Listing created (stub)”_
+10. _(Optional)_ `GetListings` (stub) → returns `[]`
+11. **Call** `PurchaseListing` _(from another account)_
+
+    🔔 Expect: _“Listing purchased (stub)”_ log
+
+---
+
+## ✅ Outcome
+
+You’ve now walked through:
+
+**Campaign creation → Contribution → NFT mint → Listing → Purchase**
+
+To go production-ready, simply swap the stubbed `NFTStorefrontV2` logic with the full Flow open-source storefront implementation.
