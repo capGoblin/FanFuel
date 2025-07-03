@@ -1,4 +1,7 @@
 import NonFungibleToken from "NonFungibleToken"
+import MetadataViews from "MetadataViews"
+import FungibleToken from "FungibleToken"
+import ViewResolver from "ViewResolver"
 
 /// MilestoneNFT - Simplified NFT for testing
 access(all) contract MilestoneNFT: NonFungibleToken {
@@ -16,11 +19,21 @@ access(all) contract MilestoneNFT: NonFungibleToken {
     access(all) let CollectionPublicPath: PublicPath
 
     // NFT Resource
-    access(all) resource NFT: NonFungibleToken.NFT {
+    access(all) resource NFT: NonFungibleToken.NFT, ViewResolver.Resolver {
         access(all) let id: UInt64
+        access(all) let name: String
+        access(all) let description: String
+        access(all) let image: String
+        access(all) let royaltyReceiver: Capability<&{FungibleToken.Receiver}>
+        access(all) let royaltyCut: UFix64
 
-        init(id: UInt64) {
+        init(id: UInt64, name: String, description: String, image: String, royaltyReceiver: Capability<&{FungibleToken.Receiver}>, royaltyCut: UFix64) {
             self.id = id
+            self.name = name
+            self.description = description
+            self.image = image
+            self.royaltyReceiver = royaltyReceiver
+            self.royaltyCut = royaltyCut
         }
 
         access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
@@ -28,16 +41,36 @@ access(all) contract MilestoneNFT: NonFungibleToken {
         }
 
         access(all) view fun getViews(): [Type] {
-            return []
+            return [
+                Type<MetadataViews.Display>(),
+                Type<MetadataViews.Royalties>()
+            ]
         }
 
         access(all) fun resolveView(_ view: Type): AnyStruct? {
-            return nil
+            switch view {
+            case Type<MetadataViews.Display>():
+                return MetadataViews.Display(
+                    name: self.name,
+                    description: self.description,
+                    thumbnail: MetadataViews.HTTPFile(url: self.image)
+                )
+            case Type<MetadataViews.Royalties>():
+                return MetadataViews.Royalties([
+                    MetadataViews.Royalty(
+                        receiver: self.royaltyReceiver,
+                        cut: self.royaltyCut,
+                        description: "Creator royalty"
+                    )
+                ])
+            default:
+                return nil
+            }
         }
     }
 
     // Collection Resource
-    access(all) resource Collection: NonFungibleToken.Collection {
+    access(all) resource Collection: NonFungibleToken.Collection, ViewResolver.ResolverCollection {
         access(all) var ownedNFTs: @{UInt64: {NonFungibleToken.NFT}}
 
         init() {
@@ -79,6 +112,11 @@ access(all) contract MilestoneNFT: NonFungibleToken {
         access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
             return <- MilestoneNFT.createEmptyCollection(nftType: Type<@MilestoneNFT.NFT>())
         }
+
+        // Conform to ResolverCollection for MetadataViews
+        access(all) view fun borrowViewResolver(id: UInt64): &{ViewResolver.Resolver}? {
+            return (&self.ownedNFTs[id] as &{ViewResolver.Resolver}?)
+        }
     }
 
     // Public function to create empty collection
@@ -97,9 +135,23 @@ access(all) contract MilestoneNFT: NonFungibleToken {
     }
 
     // Public minting function
-    access(all) fun mintNFT(recipient: &{NonFungibleToken.Receiver}): UInt64 {
+    access(all) fun mintNFT(
+        recipient: &{NonFungibleToken.Receiver},
+        name: String,
+        description: String,
+        image: String,
+        royaltyReceiver: Capability<&{FungibleToken.Receiver}>,
+        royaltyCut: UFix64
+    ): UInt64 {
         let newID: UInt64 = self.totalSupply
-        let nft <- create NFT(id: newID)
+        let nft <- create NFT(
+            id: newID,
+            name: name,
+            description: description,
+            image: image,
+            royaltyReceiver: royaltyReceiver,
+            royaltyCut: royaltyCut
+        )
         self.totalSupply = self.totalSupply + 1
         recipient.deposit(token: <-nft)
         return newID

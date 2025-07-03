@@ -108,8 +108,18 @@ access(all) contract CampaignManager {
         // For MVP, simply destroy it
         destroy payment
 
-        // Mint the NFT to the contributor
-        let newNFTID: UInt64 = MilestoneNFT.mintNFT(recipient: nftRecipient)
+        // Build royalty capability for campaign creator
+        let creatorCap = getAccount(campaign.creator)
+            .capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+
+        let newNFTID: UInt64 = MilestoneNFT.mintNFT(
+            recipient: nftRecipient,
+            name: campaign.title,
+            description: campaign.description,
+            image: "", // placeholder image URL
+            royaltyReceiver: creatorCap,
+            royaltyCut: 0.05
+        )
 
         emit ContributionReceived(campaignID: campaignID, from: nftRecipient.owner!.address, amount: nftPrice)
         emit NFTMinted(campaignID: campaignID, nftID: newNFTID, recipient: nftRecipient.owner!.address)
@@ -121,6 +131,12 @@ access(all) contract CampaignManager {
 
     access(all) fun getCampaign(id: UInt64): Campaign? {
         return self.campaigns[id]
+    }
+
+    access(all) fun getNFTPriceFor(campaignID: UInt64): UFix64 {
+        pre { self.campaigns[campaignID] != nil: "Campaign does not exist" }
+        let camp = self.campaigns[campaignID]!
+        return camp.getNFTPrice()
     }
 
     // --- Initialization ---

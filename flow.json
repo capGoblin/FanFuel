@@ -1,7 +1,8 @@
 {
   "contracts": {
     "CampaignManager": "cadence/contracts/CampaignManager.cdc",
-    "MilestoneNFT": "cadence/contracts/MilestoneNFT.cdc"
+    "MilestoneNFT": "cadence/contracts/MilestoneNFT.cdc",
+    "NFTStorefrontV2": "cadence/contracts/NFTStorefrontV2.cdc"
   },
   "dependencies": {
     "Burner": {
@@ -66,6 +67,14 @@
         "mainnet": "1d7e57aa55817448",
         "testnet": "631e88ae7f1d7c20"
       }
+    },
+    "NFTStorefrontV2": {
+      "source": "mainnet://2d55b98eb200daef.NFTStorefrontV2",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testnet": "2d55b98eb200daef",
+        "mainnet": "4eb8a10cb9f87357"
+      }
     }
   },
   "networks": {
@@ -85,7 +94,7 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["CampaignManager", "MilestoneNFT"]
+      "emulator-account": ["CampaignManager", "MilestoneNFT", "NFTStorefrontV2"]
     }
   }
 }
