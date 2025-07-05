@@ -26,6 +26,7 @@ access(all) contract CampaignManager {
         access(all) let creator: Address
         access(all) let title: String
         access(all) let description: String
+        access(all) let imageURL: String
         access(all) let goalAmount: UFix64
         access(all) let milestones: [String]
         access(all) let totalNFTs: UInt64
@@ -33,7 +34,7 @@ access(all) contract CampaignManager {
         access(all) var nftsMinted: UInt64
         access(all) var milestonesClaimed: UInt64
 
-        init(creator: Address, title: String, description: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
+        init(creator: Address, title: String, description: String, imageURL: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
             pre {
                 goalAmount > 0.0: "Campaign goal must be positive"
                 totalNFTs > 0: "Must mint at least one NFT"
@@ -42,6 +43,7 @@ access(all) contract CampaignManager {
             self.creator = creator
             self.title = title
             self.description = description
+            self.imageURL = imageURL
             self.goalAmount = goalAmount
             self.milestones = milestones
             self.totalNFTs = totalNFTs
@@ -84,12 +86,13 @@ access(all) contract CampaignManager {
     }
 
     // --- Public Functions ---
-    access(all) fun createCampaign(title: String, description: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
+    access(all) fun createCampaign(title: String, description: String, imageURL: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
         pre { milestones.length > 0: "Must provide at least one milestone" }
         let newCampaign = Campaign(
             creator: self.account.address,
             title: title,
             description: description,
+            imageURL: imageURL,
             goalAmount: goalAmount,
             milestones: milestones,
             totalNFTs: totalNFTs
@@ -141,7 +144,7 @@ access(all) contract CampaignManager {
             recipient: nftRecipient,
             name: campaign.title,
             description: campaign.description,
-            image: "", // placeholder image URL
+            image: campaign.imageURL,
             royaltyReceiver: creatorCap,
             royaltyCut: 0.05
         )
