@@ -1,0 +1,10 @@
+# Copy this to .env.local and fill in your Pinata credentials
+
+# Pinata Configuration
+# Get these from https://app.pinata.cloud/developers/api-keys
+NEXT_PUBLIC_PINATA_JWT=your_pinata_jwt_token_here
+NEXT_PUBLIC_PINATA_GATEWAY=your-gateway-name.mypinata.cloud
+
+# Example:
+# NEXT_PUBLIC_PINATA_JWT=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# NEXT_PUBLIC_PINATA_GATEWAY=green-wooden-elk-123.mypinata.cloud 
