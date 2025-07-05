@@ -12,6 +12,7 @@ access(all) contract CampaignManager {
     access(all) event CampaignCreated(id: UInt64, creator: Address, title: String, goalAmount: UFix64)
     access(all) event ContributionReceived(campaignID: UInt64, from: Address, amount: UFix64)
     access(all) event NFTMinted(campaignID: UInt64, nftID: UInt64, recipient: Address)
+    access(all) event MilestoneWithdrawn(campaignID: UInt64, milestoneIndex: UInt64, amount: UFix64)
 
     // --- Contract-level state ---
     access(all) var totalCampaigns: UInt64
@@ -30,6 +31,7 @@ access(all) contract CampaignManager {
         access(all) let totalNFTs: UInt64
         access(all) var fundedAmount: UFix64
         access(all) var nftsMinted: UInt64
+        access(all) var milestonesClaimed: UInt64
 
         init(creator: Address, title: String, description: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
             pre {
@@ -45,6 +47,7 @@ access(all) contract CampaignManager {
             self.totalNFTs = totalNFTs
             self.fundedAmount = 0.0
             self.nftsMinted = 0
+            self.milestonesClaimed = 0
         }
 
         access(contract) fun updateFunding(amount: UFix64) {
@@ -66,10 +69,23 @@ access(all) contract CampaignManager {
         access(all) fun canMintMore(): Bool {
             return self.nftsMinted < self.totalNFTs
         }
+
+        access(all) fun getMilestoneAmount(): UFix64 {
+            return self.goalAmount / UFix64(self.milestones.length)
+        }
+
+        access(all) fun totalMilestones(): UInt64 {
+            return UInt64(self.milestones.length)
+        }
+
+        access(contract) fun incrementMilestonesClaimed() {
+            self.milestonesClaimed = self.milestonesClaimed + 1
+        }
     }
 
     // --- Public Functions ---
     access(all) fun createCampaign(title: String, description: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
+        pre { milestones.length > 0: "Must provide at least one milestone" }
         let newCampaign = Campaign(
             creator: self.account.address,
             title: title,
@@ -190,6 +206,49 @@ access(all) contract CampaignManager {
             ?? panic("Could not borrow receiver capability")
 
         receiver.deposit(from: <-withdrawal)
+
+        // Generic withdrawal does not emit milestone events or alter milestone counters
+    }
+
+    // --- NEW: Withdraw exactly one milestone payout once enough funds have accumulated ---
+    access(all) fun withdrawNextMilestone(
+        campaignID: UInt64,
+        recipientCap: Capability<&{FungibleToken.Receiver}>
+    ) {
+        pre {
+            self.campaigns[campaignID] != nil: "Campaign does not exist"
+            self.campaignVaults[campaignID] != nil: "Vault not found"
+        }
+
+        let campaign = &self.campaigns[campaignID]! as &Campaign
+
+        // Ensure the caller supplied the creator's capability
+        assert(recipientCap.address == campaign.creator, message: "Recipient must be the campaign creator")
+
+        // Ensure there are still milestones left to claim
+        assert(campaign.milestonesClaimed < campaign.totalMilestones(), message: "All milestones already claimed")
+
+        let milestoneAmount: UFix64 = campaign.getMilestoneAmount()
+
+        // Access the vault holding this campaign's funds
+        var vault <- self.campaignVaults.remove(key: campaignID) ?? panic("Vault not found")
+
+        // Verify that enough money has been collected for the next milestone payout
+        assert(vault.balance >= milestoneAmount, message: "Not enough funds collected for next milestone")
+
+        let payout <- vault.withdraw(amount: milestoneAmount)
+
+        // Store back the vault after withdrawal
+        self.campaignVaults[campaignID] <-! vault
+
+        // Deposit into creator's vault
+        let receiver = recipientCap.borrow() ?? panic("Could not borrow receiver capability")
+        receiver.deposit(from: <-payout)
+
+        // Update milestone tracker
+        campaign.incrementMilestonesClaimed()
+
+        emit MilestoneWithdrawn(campaignID: campaignID, milestoneIndex: campaign.milestonesClaimed - 1, amount: milestoneAmount)
     }
 
     // --- Initialization ---
@@ -200,4 +259,4 @@ access(all) contract CampaignManager {
     }
 
     // (no custom destructor – Cadence 1.0 disallows it)
-} 
+}
