@@ -3,3 +3,6 @@
 emulator-account.pkey
 # imports
 .env
+pk
+
+flow.json

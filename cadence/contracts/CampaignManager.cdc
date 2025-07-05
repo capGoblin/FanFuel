@@ -16,6 +16,8 @@ access(all) contract CampaignManager {
     // --- Contract-level state ---
     access(all) var totalCampaigns: UInt64
     access(self) var campaigns: {UInt64: Campaign}
+    // Each campaign ID maps to a Flow vault that accumulates contributions
+    access(self) var campaignVaults: @{UInt64: FlowToken.Vault}
 
     // --- Structs ---
     access(all) struct Campaign {
@@ -82,6 +84,10 @@ access(all) contract CampaignManager {
         emit CampaignCreated(id: newCampaign.id, creator: newCampaign.creator, title: newCampaign.title, goalAmount: newCampaign.goalAmount)
 
         self.totalCampaigns = self.totalCampaigns + 1
+
+        // Create an empty vault to hold this campaign's funds
+        let emptyVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
+        self.campaignVaults[newCampaign.id] <-! emptyVault
     }
 
     access(all) fun contributeAndMint(
@@ -104,9 +110,12 @@ access(all) contract CampaignManager {
         campaign.updateFunding(amount: payment.balance)
         campaign.incrementNFTsMinted()
 
-        // Store the payment (in a real implementation, this would go to the creator)
-        // For MVP, simply destroy it
-        destroy payment
+        // Move the campaign vault out, deposit, then store it back
+        let vault <- self.campaignVaults.remove(key: campaignID) 
+            ?? panic("Vault missing")
+        let receiverRef = (&vault as &{FungibleToken.Receiver})
+        receiverRef.deposit(from: <-payment)
+        self.campaignVaults[campaignID] <-! vault
 
         // Build royalty capability for campaign creator
         let creatorCap = getAccount(campaign.creator)
@@ -139,9 +148,56 @@ access(all) contract CampaignManager {
         return camp.getNFTPrice()
     }
 
+    // --- NEW: view the amount collected for a campaign ---
+    access(all) view fun getCollectedAmount(campaignID: UInt64): UFix64 {
+    pre {
+        self.campaignVaults[campaignID] != nil: "Vault does not exist"
+    }
+
+        let vaultRef = (&self.campaignVaults[campaignID] as &FlowToken.Vault?)!
+        return vaultRef.balance
+    }
+
+    // --- NEW: creator-controlled withdrawal ---
+    // `recipientCap` is usually the creator's /public/flowTokenReceiver capability.
+    access(all) fun withdrawFunds(
+        campaignID: UInt64,
+        amount: UFix64,
+        recipientCap: Capability<&{FungibleToken.Receiver}>
+    ) {
+        pre {
+            self.campaigns[campaignID] != nil: "Campaign does not exist"
+            self.campaignVaults[campaignID] != nil: "Vault not found"
+        }
+
+        let campaign = self.campaigns[campaignID]!
+
+        // OPTIONAL: ensure the caller passed a cap that belongs to the creator.
+        // We can't inspect the transaction signer here, but we can at least check the
+        // cap's address matches the campaign creator.
+        assert(recipientCap.address == campaign.creator, message: "Recipient must be the campaign creator")
+
+        var vault <- self.campaignVaults.remove(key: campaignID) 
+            ?? panic("Vault not found")
+
+        let withdrawal <- vault.withdraw(amount: amount)
+
+        // put vault back after withdrawal
+        self.campaignVaults[campaignID] <-! vault
+
+        // deposit to creator
+        let receiver = recipientCap.borrow()
+            ?? panic("Could not borrow receiver capability")
+
+        receiver.deposit(from: <-withdrawal)
+    }
+
     // --- Initialization ---
     init() {
         self.totalCampaigns = 0
         self.campaigns = {}
+        self.campaignVaults <- {}
     }
+
+    // (no custom destructor – Cadence 1.0 disallows it)
 } 
