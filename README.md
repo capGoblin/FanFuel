@@ -1,183 +1,170 @@
-## 👋 Welcome Flow Developer!
+# FanFuel – Crowdfund & Reward Creators with Flow NFTs
 
-This project is a starting point for you to develop smart contracts on the Flow Blockchain. It comes with example contracts, scripts, transactions, and tests to help you get started.
+**FanFuel** empowers creators to launch **milestone-driven NFT campaigns**—where they not only raise funds but  **also earn royalties on every future resale** through Flow’s powerful [`NFTStorefrontV2`](https://developers.flow.com/build/core-contracts/nft-storefront). Creators can also offer **exclusive perks and loyalty rewards** to NFT-holding fans, turning early backers into long-term supporters and community champions.
 
-## 🔨 Getting Started
 
-Here are some essential resources to help you hit the ground running:
 
-- **[Flow Documentation](https://developers.flow.com/)** - The official Flow Documentation is a great starting point to start learning about about [building](https://developers.flow.com/build/flow) on Flow.
-- **[Cadence Documentation](https://cadence-lang.org/docs/language)** - Cadence is the native language for the Flow Blockchain. It is a resource-oriented programming language that is designed for developing smart contracts.  The documentation is a great place to start learning about the language.
-- **[Visual Studio Code](https://code.visualstudio.com/)** and the **[Cadence Extension](https://marketplace.visualstudio.com/items?itemName=onflow.cadence)** - It is recommended to use the Visual Studio Code IDE with the Cadence extension installed.  This will provide syntax highlighting, code completion, and other features to support Cadence development.
-- **[Flow Clients](https://developers.flow.com/tools/clients)** - There are clients available in multiple languages to interact with the Flow Blockchain.  You can use these clients to interact with your smart contracts, run transactions, and query data from the network.
-- **[Block Explorers](https://developers.flow.com/ecosystem/block-explorers)** - Block explorers are tools that allow you to explore on-chain data.  You can use them to view transactions, accounts, events, and other information.  [Flowser](https://flowser.dev/) is a powerful block explorer for local development on the Flow Emulator.
+---
 
-## 📦 Project Structure
+## ⚙️ How we integrate with Flow
 
-Your project has been set up with the following structure:
+| Layer     | Contract / Resource     | What it does                                                      |
+| --------- | ----------------------- | ----------------------------------------------------------------- |
+| Cadence   | **MilestoneNFT.cdc**    | Custom NFT that stores image/metadata for each project milestone  |
+| Cadence   | **CampaignManager.cdc** | Manages campaigns, contributions and milestone unlocks            |
+| Flow Core | **NFTStorefrontV2**     | Secondary-market sales; we rely on its built-in royalty engine    |
+| Front-end | Next.js + FCL           | Wallet auth, scripts & transactions (mint, contribute, list, buy) |
 
-- `flow.json` - This is the configuration file for your project (analogous to a `package.json` file for NPM).  It has been initialized with a basic configuration to get started.
-- `/cadence` - This is where your Cadence smart contracts code lives
+---
 
-Inside the `cadence` folder you will find:
-- `/contracts` - This folder contains your Cadence contracts (these are deployed to the network and contain the business logic for your application)
-  - `Counter.cdc`
-- `/scripts` - This folder contains your Cadence scripts (read-only operations)
-  - `GetCounter.cdc`
-- `/transactions` - This folder contains your Cadence transactions (state-changing operations)
-  - `IncrementCounter.cdc`
-- `/tests` - This folder contains your Cadence tests (integration tests for your contracts, scripts, and transactions to verify they behave as expected)
-  - `Counter_test.cdc`
+## 💰 How These NFTs Create Value
 
-## Running the Existing Project
+### 🎨 For Creators  
+- Mint **milestone NFTs** as digital collectibles tied to specific funding goals.  
+- Earn automatic **royalties on every resale** via [`NFTStorefrontV2`](https://developers.flow.com/build/core-contracts/nft-storefront)—no custom logic needed.  
+- Future-proof engagement: gate Discord channels, unlock merch, or build **loyalty rewards** for NFT holders.
 
-### Executing the `GetCounter` Script
+### 🙌 For Fans / Backers  
+- Own a **provable on-chain badge** that shows you backed the project.  
+- Trade NFTs on open marketplaces—**creators still earn royalties** on resales.  
+- Get rewarded as early adopters through perks or exclusive access in the creator’s growing world.
 
-To run the `GetCounter` script, use the following command:
+### 🛍️ For Collectors / Buyers  
+- **One-click purchases** using any Flow-compatible wallet.  
+- Transparent price and expiry pulled **directly from the blockchain**.  
+- Tap into a growing **secondary market** with baked-in, trustless royalty support.
 
-```shell
-flow scripts execute cadence/scripts/GetCounter.cdc
+---
+
+## 🔗 Demo contracts & accounts
+
+| Role               | Testnet Address      | Explorer Links                                                                                                                                                  |
+| ------------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Campaign Creator (or deployer) | `0xa474cefca3cbc541` | [Deployer](https://testnet.flowscan.io/account/a474cefca3cbc541) · [CampaignManager](https://contractbrowser.com/A.a474cefca3cbc541.CampaignManager) · [MilestoneNFT](https://contractbrowser.com/A.a474cefca3cbc541.MilestoneNFT) | 
+| Fan / Backer       | `0xb220abcf3acfcf20` |   [Fan](https://testnet.flowscan.io/account/b220abcf3acfcf20)                                                                                                                                            |
+| Buyer / Collector  | `0x564712122b35cfff` | [Buyer](https://testnet.flowscan.io/account/564712122b35cfff)                                                                                                 | 
+
+Watch the full flow in action in our demo video → [YouTube](https://www.youtube.com/watch?v=zBuIca5tBTk).
+
+---
+
+## 👥 Team
+
+| Name        | Role                 | Twitter                                           | Telegram         |
+| ----------- | -------------------- | ------------------------------------------------- | --------------- |
+| Dharshan    | Full-stack / Cadence | [dharshan_tw](https://x.com/dharshan_tw)         | [capGoblin](https://t.me/capGoblin)|
+| Raaghav | Full-stack / Cadence             | [Raaghav_manivel](https://x.com/Raaghav_manivel)  | [RaaghavManivel](https://t.me/RaaghavManivel)|
+
+---
+
+# FanFuel – System Architecture
+
+```mermaid
+graph TD
+  %% Front-end
+  subgraph "Next.js Front-end"
+    A["User Browser"] -->|"Wallet Auth (FCL)"| B["Flow Client Library"]
+    A --> C["Pages (app/*)"]
+    C --> D["React Hooks (scripts / tx)"]
+  end
+
+  %% Blockchain gateway
+  B --> E["Flow Access Node (Testnet)"]
+
+  %% Smart-contract layer
+  subgraph "Cadence Contracts (on-chain)"
+    F["CampaignManager.cdc"] -->|"mints / manages"| G["MilestoneNFT.cdc"]
+    G -->|"listed on"| H["NFTStorefrontV2"]
+    F --> I["FlowToken / FungibleToken"]
+    G --> J["NonFungibleToken"]
+  end
+
+  %% Data flow
+  D -->|"Query Scripts"| E
+  D -->|"Submit Tx (Mint / List / Buy)"| E
+  E --> F
+  E --> G
+  E --> H
+
+  %% Off-chain storage
+  subgraph "IPFS / Pinata"
+    K["Metadata + images"]
+  end
+  G -->|"thumbnail.uri()"| K
 ```
 
-### Sending the `IncrementCounter` Transaction
+### Legend
 
-To run the `IncrementCounter` transaction, use the following command:
+- **User Browser** – React UI served by Next.js.
+- **Flow Client Library (FCL)** – Handles wallet discovery & signing.
+- **React Hooks** – Thin wrappers calling Cadence scripts / transactions.
+- **Flow Access Node** – gRPC endpoint at `https://access-testnet.onflow.org`.
+- **CampaignManager.cdc** – Creates campaigns & triggers NFT mints.
+- **MilestoneNFT.cdc** – Resource-oriented NFT contract.
+- **NFTStorefrontV2** – Core marketplace contract for listings & royalties.
+- **IPFS / Pinata** – Off-chain storage for images & JSON metadata referenced via URI.
 
-```shell
-flow transactions send cadence/transactions/IncrementCounter.cdc
+This diagram shows the full request flow from a button click in the browser down to Cadence execution on-chain and back, including how images are resolved off-chain.
+
+---
+
+## 🔄 Contract interactions (hooks → Cadence transactions / scripts)
+
+```mermaid
+graph LR
+
+  %% React hooks (frontend)
+  subgraph "Hooks (frontend/hooks)"
+    CC[useCreateCampaign] --> TX1(CreateCampaign.cdc)
+    CM[useContributeAndMint] --> TX2(ContributeAndMint.cdc)
+    LN[useListNFT] --> TX3(ListMilestoneNFT.cdc)
+    BN[useBuyNFT] --> TX4(BuyMilestoneNFT.cdc)
+    SNC[useSetupNFTCollection] --> TX5(SetupNFTCollection.cdc)
+    SNS[useSetupStorefront] --> TX6(SetupStorefront.cdc)
+    GM[useMarketplaceListings] --> SC1(GetListings.cdc)
+    GC[useCampaigns] --> SC2(GetCampaigns.cdc)
+    G1[useCampaign] --> SC3(GetCampaign.cdc)
+    GU[useUserNFTs] --> SC4(GetNFTMetadata.cdc)
+  end
+
+  %% Transactions -> contract functions
+  TX1 -->|createCampaign| CMC[CampaignManager]
+  TX2 -->|contributeAndMint| CMC
+  TX4 -->|purchase| NSF[NFTStorefrontV2]
+  TX3 -->|createListing| NSF
+  TX5 -->|createEmptyCollection| MNFT[MilestoneNFT]
+  TX6 -->|createStorefront| NSF
+
+  %% Scripts -> read-only paths
+  SC1 --> NSF
+  SC2 --> CMC
+  SC3 --> CMC
+  SC4 --> MNFT
 ```
 
-To learn more about using the CLI, check out the [Flow CLI Documentation](https://developers.flow.com/tools/flow-cli).
+This view maps every React hook to the Cadence **transaction** or **script** it runs and then to the **on-chain contract function** it touches.
 
-## 👨‍💻 Start Developing
+--- 
 
-### Creating a New Contract
+## 🚀 Quick start
 
-To add a new contract to your project, run the following command:
+```bash
+# 1. Install deps
+bun i  # or npm install
 
-```shell
-flow generate contract
+# 2. (Optional) Re-deploy contracts – use the **creator account** (`0xa474cefca3cbc541`)
+flow deploy --network testnet
+
+# 3. Run the web app
+bun dev  # or npm run dev
 ```
 
-This command will create a new contract file and add it to the `flow.json` configuration file.
+The dApp connects to `https://access-testnet.onflow.org` by default. Update addresses in `frontend/providers/FlowProvider.tsx` if you redeploy.
 
-### Creating a New Script
+---
 
-To add a new script to your project, run the following command:
+## 📄 License
 
-```shell
-flow generate script
-```
+MIT – do whatever you want, just give us a shout-out.
 
-This command will create a new script file.  Scripts are used to read data from the blockchain and do not modify state (i.e. get the current balance of an account, get a user's NFTs, etc).
-
-You can import any of your own contracts or installed dependencies in your script file using the `import` keyword.  For example:
-
-```cadence
-import "Counter"
-```
-
-### Creating a New Transaction
-
-To add a new transaction to your project you can use the following command:
-
-```shell
-flow generate transaction
-```
-
-This command will create a new transaction file.  Transactions are used to modify the state of the blockchain (i.e purchase an NFT, transfer tokens, etc).
-
-You can import any dependencies as you would in a script file.
-
-### Creating a New Test
-
-To add a new test to your project you can use the following command:
-
-```shell
-flow generate test
-```
-
-This command will create a new test file.  Tests are used to verify that your contracts, scripts, and transactions are working as expected.
-
-### Installing External Dependencies
-
-If you want to use external contract dependencies (such as NonFungibleToken, FlowToken, FungibleToken, etc.) you can install them using [Flow CLI Dependency Manager](https://developers.flow.com/tools/flow-cli/dependency-manager).
-
-For example, to install the NonFungibleToken contract you can use the following command:
-
-```shell
-flow deps add mainnet://1d7e57aa55817448.NonFungibleToken
-```
-
-Contracts can be found using [ContractBrowser](https://contractbrowser.com/), but be sure to verify the authenticity before using third-party contracts in your project.
-
-## 🧪 Testing
-
-To verify that your project is working as expected you can run the tests using the following command:
-
-```shell
-flow test
-```
-
-This command will run all tests with the `_test.cdc` suffix (these can be found in the `cadence/tests` folder). You can add more tests here using the `flow generate test` command (or by creating them manually).
-
-To learn more about testing in Cadence, check out the [Cadence Test Framework Documentation](https://cadence-lang.org/docs/testing-framework).
-
-## 🚀 Deploying Your Project
-
-To deploy your project to the Flow network, you must first have a Flow account and have configured your deployment targets in the `flow.json` configuration file.
-
-You can create a new Flow account using the following command:
-
-```shell
-flow accounts create
-```
-
-Learn more about setting up deployment targets in the [Flow CLI documentation](https://developers.flow.com/tools/flow-cli/deployment/project-contracts).
-
-### Deploying to the Flow Emulator
-
-To deploy your project to the Flow Emulator, start the emulator using the following command:
-
-```shell
-flow emulator --start
-```
-
-To deploy your project, run the following command:
-
-```shell
-flow project deploy --network=emulator
-```
-
-This command will start the Flow Emulator and deploy your project to it. You can now interact with your project using the Flow CLI or alternate [client](https://developers.flow.com/tools/clients).
-
-### Deploying to Flow Testnet
-
-To deploy your project to Flow Testnet you can use the following command:
-
-```shell
-flow project deploy --network=testnet
-```
-
-This command will deploy your project to Flow Testnet. You can now interact with your project on this network using the Flow CLI or any other Flow client.
-
-### Deploying to Flow Mainnet
-
-To deploy your project to Flow Mainnet you can use the following command:
-
-```shell
-flow project deploy --network=mainnet
-```
-
-This command will deploy your project to Flow Mainnet. You can now interact with your project using the Flow CLI or alternate [client](https://developers.flow.com/tools/clients).
-
-## 📚 Other Resources
-
-- [Cadence Design Patterns](https://cadence-lang.org/docs/design-patterns)
-- [Cadence Anti-Patterns](https://cadence-lang.org/docs/anti-patterns)
-- [Flow Core Contracts](https://developers.flow.com/build/core-contracts)
-
-## 🤝 Community
-- [Flow Community Forum](https://forum.flow.com/)
-- [Flow Discord](https://discord.gg/flow)
-- [Flow Twitter](https://x.com/flow_blockchain)
+---
