@@ -86,10 +86,10 @@ access(all) contract CampaignManager {
     }
 
     // --- Public Functions ---
-    access(all) fun createCampaign(title: String, description: String, imageURL: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
+    access(all) fun createCampaign(creator: Address, title: String, description: String, imageURL: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
         pre { milestones.length > 0: "Must provide at least one milestone" }
         let newCampaign = Campaign(
-            creator: self.account.address,
+            creator: creator,
             title: title,
             description: description,
             imageURL: imageURL,

@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useCampaigns } from "@/hooks/useCampaigns";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const categories = ["All", "Music", "Art", "Gaming", "Tech", "Film", "Fashion"];
 const sortOptions = ["Latest", "Most Funded", "Ending Soon", "Most Backers"];
@@ -161,8 +162,31 @@ export default function CampaignsPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="bg-gray-900/50 border-gray-700/50 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300 group overflow-hidden">
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                    <div className="text-6xl">🚀</div>
+                  <div className="relative h-48 overflow-hidden">
+                    {/* Fallback gradient/emoji always behind */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                      <div className="text-6xl">🚀</div>
+                    </div>
+
+                    {/* Image layer (may hide itself on error) */}
+                    {campaign.imageURL && (() => {
+                      const displayUrl = campaign.imageURL.includes(".mypinata.cloud/ipfs/")
+                        ? campaign.imageURL.replace(/https?:\/\/[^/]+\/ipfs\/(.+)/, "https://gateway.pinata.cloud/ipfs/$1")
+                        : campaign.imageURL;
+                      return (
+                        <Image
+                          src={displayUrl}
+                          alt=""
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          onError={(e) => {
+                            const target = e.currentTarget as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      );
+                    })()}
                     <Badge className="absolute top-3 left-3 bg-gradient-to-r from-cyan-500 to-purple-500">
                       <Star className="mr-1 h-3 w-3" />
                       On Flow

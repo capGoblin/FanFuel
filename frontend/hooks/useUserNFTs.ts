@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import * as fcl from "@onflow/fcl";
 import * as t from "@onflow/types";
+import { CloudCog } from "lucide-react";
 
 interface NFTMetadata {
   id: string;
@@ -53,7 +54,7 @@ export function useUserNFTs(userAddress: string | null): UseUserNFTsResult {
       // First, get the NFT IDs owned by the user
       const getNFTIdsScript = `
         import NonFungibleToken from 0x631e88ae7f1d7c20
-        import MilestoneNFT from 0xcc3f81c625b55c77
+        import MilestoneNFT from 0xMilestoneNFT
 
         access(all) fun main(account: Address): [UInt64] {
             let collectionRef = getAccount(account)
@@ -81,7 +82,7 @@ export function useUserNFTs(userAddress: string | null): UseUserNFTsResult {
       // Then, get metadata for each NFT
       const getNFTMetadataScript = `
         import NonFungibleToken from 0x631e88ae7f1d7c20
-        import MilestoneNFT from 0xcc3f81c625b55c77
+        import MilestoneNFT from 0xMilestoneNFT
 
         access(all) fun main(account: Address, id: UInt64): {String: String?} {
             let collection = getAccount(account)
@@ -213,6 +214,7 @@ export function useUserNFTs(userAddress: string | null): UseUserNFTsResult {
       });
 
       const nftMetadata = await Promise.all(nftMetadataPromises);
+      console.log(nftMetadata);
       setNFTs(nftMetadata);
     } catch (err) {
       console.error("Error fetching user NFTs:", err);
