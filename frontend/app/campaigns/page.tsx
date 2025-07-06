@@ -233,92 +233,92 @@ export default function CampaignsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-gray-900/50 border-gray-700/50 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300 group overflow-hidden">
-                  <div className="relative h-48 overflow-hidden">
-                    {/* Fallback gradient/emoji always behind */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                      <div className="text-6xl">🚀</div>
+                <Link href={`/campaign/${campaign.id}`} className="block group">
+                  <Card className="bg-gray-900/50 border-gray-700/50 backdrop-blur-sm hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 overflow-hidden cursor-pointer hover:scale-[1.02]">
+                    <div className="relative h-48 overflow-hidden">
+                      {/* Fallback gradient/emoji always behind */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <div className="text-6xl">🚀</div>
+                      </div>
+
+                      {/* Image layer (may hide itself on error) */}
+                      {campaign.imageURL &&
+                        (() => {
+                          const displayUrl = campaign.imageURL.includes(
+                            ".mypinata.cloud/ipfs/"
+                          )
+                            ? campaign.imageURL.replace(
+                                /https?:\/\/[^/]+\/ipfs\/(.+)/,
+                                "https://gateway.pinata.cloud/ipfs/$1"
+                              )
+                            : campaign.imageURL;
+                          return (
+                            <Image
+                              src={displayUrl}
+                              alt=""
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              onError={(e) => {
+                                const target =
+                                  e.currentTarget as HTMLImageElement;
+                                target.style.display = "none";
+                              }}
+                            />
+                          );
+                        })()}
+                      <Badge className="absolute top-3 left-3 bg-gradient-to-r from-cyan-500 to-purple-500">
+                        <Star className="mr-1 h-3 w-3" />
+                        On Flow
+                      </Badge>
                     </div>
 
-                    {/* Image layer (may hide itself on error) */}
-                    {campaign.imageURL &&
-                      (() => {
-                        const displayUrl = campaign.imageURL.includes(
-                          ".mypinata.cloud/ipfs/"
-                        )
-                          ? campaign.imageURL.replace(
-                              /https?:\/\/[^/]+\/ipfs\/(.+)/,
-                              "https://gateway.pinata.cloud/ipfs/$1"
-                            )
-                          : campaign.imageURL;
-                        return (
-                          <Image
-                            src={displayUrl}
-                            alt=""
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            onError={(e) => {
-                              const target =
-                                e.currentTarget as HTMLImageElement;
-                              target.style.display = "none";
-                            }}
-                          />
-                        );
-                      })()}
-                    <Badge className="absolute top-3 left-3 bg-gradient-to-r from-cyan-500 to-purple-500">
-                      <Star className="mr-1 h-3 w-3" />
-                      On Flow
-                    </Badge>
-                  </div>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                            {campaign.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm mt-1">
+                            by {campaign.creator.slice(0, 6)}...
+                            {campaign.creator.slice(-4)}
+                          </p>
+                        </div>
 
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
-                          {campaign.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm mt-1">
-                          by {campaign.creator.slice(0, 6)}...
-                          {campaign.creator.slice(-4)}
+                        <p className="text-gray-300 text-sm line-clamp-2">
+                          {campaign.description}
                         </p>
-                      </div>
 
-                      <p className="text-gray-300 text-sm line-clamp-2">
-                        {campaign.description}
-                      </p>
-
-                      <div className="space-y-3">
-                        <ProgressBar
-                          progress={
-                            (parseFloat(campaign.fundedAmount) /
-                              parseFloat(campaign.goalAmount)) *
-                            100
-                          }
-                        />
-                        <div className="flex justify-between text-sm">
-                          <span className="text-white font-semibold">
-                            {parseFloat(campaign.fundedAmount).toFixed(2)} FLOW
-                          </span>
-                          <span className="text-gray-400">
-                            of {parseFloat(campaign.goalAmount).toFixed(0)} FLOW
-                          </span>
+                        <div className="space-y-3">
+                          <ProgressBar
+                            progress={
+                              (parseFloat(campaign.fundedAmount) /
+                                parseFloat(campaign.goalAmount)) *
+                              100
+                            }
+                          />
+                          <div className="flex justify-between text-sm">
+                            <span className="text-white font-semibold">
+                              {parseFloat(campaign.fundedAmount).toFixed(2)} FLOW
+                            </span>
+                            <span className="text-gray-400">
+                              of {parseFloat(campaign.goalAmount).toFixed(0)} FLOW
+                            </span>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex justify-between items-center text-sm text-gray-400">
-                        <div className="flex items-center">
-                          <Users className="mr-1 h-4 w-4" />
-                          {campaign.nftsMinted} NFTs minted
+                        <div className="flex justify-between items-center text-sm text-gray-400">
+                          <div className="flex items-center">
+                            <Users className="mr-1 h-4 w-4" />
+                            {campaign.nftsMinted} NFTs minted
+                          </div>
+                          <div className="flex items-center">
+                            <Zap className="mr-1 h-4 w-4" />
+                            {campaign.milestones.length} milestones
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <Zap className="mr-1 h-4 w-4" />
-                          {campaign.milestones.length} milestones
-                        </div>
-                      </div>
 
-                      <div className="flex items-center justify-between pt-2">
-                        <div className="flex gap-2">
+                        <div className="flex items-center justify-between pt-2">
                           <Badge
                             variant="outline"
                             className="border-cyan-500 text-cyan-400"
@@ -329,37 +329,35 @@ export default function CampaignsPage() {
                             ).toFixed(2)}{" "}
                             FLOW/NFT
                           </Badge>
+                          
+                          {user.addr?.toLowerCase() === campaign.creator.toLowerCase() ? (
+                            <Button
+                              size="sm"
+                              disabled={withdrawingId === campaign.id}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleWithdraw(campaign.id);
+                              }}
+                              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 relative z-10"
+                            >
+                              {withdrawingId === campaign.id ? (
+                                <LoadingSpinner size="sm" />
+                              ) : (
+                                "Withdraw Milestone"
+                              )}
+                            </Button>
+                          ) : (
+                            <div className="flex items-center text-purple-400 group-hover:text-purple-300 transition-colors">
+                              <span className="text-sm font-medium mr-2">Click to view</span>
+                              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                          )}
                         </div>
-                        {user.addr?.toLowerCase() ===
-                        campaign.creator.toLowerCase() ? (
-                          <Button
-                            size="sm"
-                            disabled={withdrawingId === campaign.id}
-                            onClick={() => handleWithdraw(campaign.id)}
-                            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                          >
-                            {withdrawingId === campaign.id ? (
-                              <LoadingSpinner size="sm" />
-                            ) : (
-                              "Withdraw Milestone"
-                            )}
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                            asChild
-                          >
-                            <Link href={`/campaign/${campaign.id}`}>
-                              <ArrowRight className="mr-1 h-4 w-4" />
-                              View
-                            </Link>
-                          </Button>
-                        )}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </div>

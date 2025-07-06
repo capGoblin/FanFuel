@@ -27,9 +27,6 @@ export default function Gallery() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [listingFilter, setListingFilter] = useState<
-    "all" | "owned" | "listed"
-  >("all");
 
   const {
     nfts,
@@ -79,31 +76,12 @@ export default function Gallery() {
     }
   };
 
-  const filteredNFTs = nfts
-    .filter((nft) => {
-      const matchesSearch =
-        nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        nft.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // Add demo isListed property for some NFTs for demonstration
-      const nftWithListing = {
-        ...nft,
-        isListed: parseInt(nft.id) % 3 === 0, // Demo: every 3rd NFT is "listed"
-      };
-
-      let matchesFilter = true;
-      if (listingFilter === "listed") {
-        matchesFilter = nftWithListing.isListed;
-      } else if (listingFilter === "owned") {
-        matchesFilter = !nftWithListing.isListed;
-      }
-
-      return matchesSearch && matchesFilter;
-    })
-    .map((nft) => ({
-      ...nft,
-      isListed: parseInt(nft.id) % 3 === 0, // Add the isListed property to all filtered NFTs
-    }));
+  const filteredNFTs = nfts.filter((nft) => {
+    const matchesSearch =
+      nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      nft.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
+  });
 
   const handleRefresh = () => {
     checkSetup();
@@ -251,27 +229,13 @@ export default function Gallery() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
         >
           {[
             {
               label: "Total NFTs",
               value: nfts.length.toString(),
               color: "text-purple-400",
-            },
-            {
-              label: "Owned",
-              value: nfts
-                .filter((nft) => !(parseInt(nft.id) % 3 === 0))
-                .length.toString(),
-              color: "text-cyan-400",
-            },
-            {
-              label: "Listed",
-              value: nfts
-                .filter((nft) => parseInt(nft.id) % 3 === 0)
-                .length.toString(),
-              color: "text-green-400",
             },
             {
               label: "From Campaigns",
@@ -312,48 +276,6 @@ export default function Gallery() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 bg-gray-800 border-gray-600 text-white"
                     />
-                  </div>
-                </div>
-
-                {/* Filter Buttons */}
-                <div className="flex items-center space-x-2">
-                  <div className="flex bg-gray-800 rounded-lg p-1">
-                    <Button
-                      variant={listingFilter === "all" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setListingFilter("all")}
-                      className={`${
-                        listingFilter === "all"
-                          ? "bg-purple-600 text-white"
-                          : "text-gray-400 hover:text-white hover:bg-gray-700"
-                      }`}
-                    >
-                      All
-                    </Button>
-                    <Button
-                      variant={listingFilter === "owned" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setListingFilter("owned")}
-                      className={`${
-                        listingFilter === "owned"
-                          ? "bg-purple-600 text-white"
-                          : "text-gray-400 hover:text-white hover:bg-gray-700"
-                      }`}
-                    >
-                      Owned
-                    </Button>
-                    <Button
-                      variant={listingFilter === "listed" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setListingFilter("listed")}
-                      className={`${
-                        listingFilter === "listed"
-                          ? "bg-purple-600 text-white"
-                          : "text-gray-400 hover:text-white hover:bg-gray-700"
-                      }`}
-                    >
-                      Listed
-                    </Button>
                   </div>
                 </div>
 
@@ -401,8 +323,8 @@ export default function Gallery() {
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">No NFTs Yet</h3>
             <p className="text-gray-400 mb-8 max-w-md mx-auto">
-              You haven't collected any NFTs yet. Contribute to campaigns to
-              earn exclusive NFTs!
+              You haven&apos;t collected any NFTs yet. Contribute to campaigns
+              to earn exclusive NFTs!
             </p>
             <GlowButton asChild>
               <Link href="/campaigns">
@@ -424,7 +346,7 @@ export default function Gallery() {
                   No Results Found
                 </h3>
                 <p className="text-gray-400">
-                  No NFTs match your search for "{searchTerm}"
+                  No NFTs match your search for &quot;{searchTerm}&quot;
                 </p>
               </div>
             ) : (

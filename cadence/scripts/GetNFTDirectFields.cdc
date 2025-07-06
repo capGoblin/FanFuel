@@ -1,5 +1,5 @@
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import MilestoneNFT from 0xcc3f81c625b55c77
+import MilestoneNFT from 0xa474cefca3cbc541
 
 /// Script to directly access NFT fields bypassing MetadataViews
 access(all) fun main(account: Address, id: UInt64): {String: String} {

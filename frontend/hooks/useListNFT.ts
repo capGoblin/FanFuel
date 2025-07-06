@@ -5,7 +5,7 @@ import * as fcl from "@onflow/fcl";
 
 const LIST_NFT_TRANSACTION = `
 import NFTStorefrontV2 from 0x2d55b98eb200daef
-import MilestoneNFT      from 0xcc3f81c625b55c77
+import MilestoneNFT      from 0xa474cefca3cbc541
 import FlowToken         from 0x7e60df042a9c0868
 import NonFungibleToken  from 0x631e88ae7f1d7c20
 import FungibleToken     from 0x9a0766d93b6608b7

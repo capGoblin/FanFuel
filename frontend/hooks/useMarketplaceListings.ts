@@ -7,7 +7,7 @@ import * as fcl from "@onflow/fcl";
 const GET_ACCOUNT_LISTINGS_SCRIPT = `
 import NFTStorefrontV2 from 0x2d55b98eb200daef
 import MetadataViews     from 0x631e88ae7f1d7c20
-import MilestoneNFT      from 0xcc3f81c625b55c77
+import MilestoneNFT      from 0xa474cefca3cbc541
 import NonFungibleToken  from 0x631e88ae7f1d7c20
 import ViewResolver      from 0x631e88ae7f1d7c20
 
@@ -142,8 +142,10 @@ const optimizePinataImageUrl = (url: string): string => {
 
 // Addresses to scan for storefront listings. In a real app you would index events instead.
 const DEFAULT_SELLERS = [
-  "0xcc3f81c625b55c77", // FanFuel testnet account
+  "0xa474cefca3cbc541", // New FanFuel testnet account
   "0x5a81c99ad97bb81f",
+  "0x564712122b35cfff",
+  "0xb220abcf3acfcf20"
 ];
 
 export interface MarketplaceListing {
