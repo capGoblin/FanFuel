@@ -6,13 +6,14 @@ import * as fcl from "@onflow/fcl";
 // Configure FCL
 fcl
   .config()
-  .put("accessNode.api", "https://rest-testnet.onflow.org")
+  .put("accessNode.api", "https://access-testnet.onflow.org")
   .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn")
   .put("flow.network", "testnet")
   .put("app.detail.title", "FanFuel")
   .put("app.detail.icon", "https://i.imgur.com/r23Zhvu.png")
-  .put("0xCampaignManager", "0xd024903f49a21299")
-  .put("0xMilestoneNFT", "0xd024903f49a21299")
+  .put("0xCampaignManager", "0xcc3f81c625b55c77")
+  .put("0xMilestoneNFT", "0xcc3f81c625b55c77")
+  .put("0xNFTStorefrontV2", "0x2d55b98eb200daef")
   .put("0xMetadataViews", "0x631e88ae7f1d7c20")
   .put("0xViewResolver", "0x631e88ae7f1d7c20")
   .put("0xNonFungibleToken", "0x631e88ae7f1d7c20")

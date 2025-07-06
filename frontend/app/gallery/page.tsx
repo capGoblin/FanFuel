@@ -27,6 +27,9 @@ export default function Gallery() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [listingFilter, setListingFilter] = useState<
+    "all" | "owned" | "listed"
+  >("all");
 
   const {
     nfts,
@@ -76,12 +79,31 @@ export default function Gallery() {
     }
   };
 
-  const filteredNFTs = nfts.filter((nft) => {
-    const matchesSearch =
-      nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      nft.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredNFTs = nfts
+    .filter((nft) => {
+      const matchesSearch =
+        nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        nft.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Add demo isListed property for some NFTs for demonstration
+      const nftWithListing = {
+        ...nft,
+        isListed: parseInt(nft.id) % 3 === 0, // Demo: every 3rd NFT is "listed"
+      };
+
+      let matchesFilter = true;
+      if (listingFilter === "listed") {
+        matchesFilter = nftWithListing.isListed;
+      } else if (listingFilter === "owned") {
+        matchesFilter = !nftWithListing.isListed;
+      }
+
+      return matchesSearch && matchesFilter;
+    })
+    .map((nft) => ({
+      ...nft,
+      isListed: parseInt(nft.id) % 3 === 0, // Add the isListed property to all filtered NFTs
+    }));
 
   const handleRefresh = () => {
     checkSetup();
@@ -203,7 +225,7 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
-      <div className="container py-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -238,19 +260,23 @@ export default function Gallery() {
               color: "text-purple-400",
             },
             {
-              label: "Unique",
-              value: nfts.length.toString(),
+              label: "Owned",
+              value: nfts
+                .filter((nft) => !(parseInt(nft.id) % 3 === 0))
+                .length.toString(),
               color: "text-cyan-400",
+            },
+            {
+              label: "Listed",
+              value: nfts
+                .filter((nft) => parseInt(nft.id) % 3 === 0)
+                .length.toString(),
+              color: "text-green-400",
             },
             {
               label: "From Campaigns",
               value: nfts.length.toString(),
               color: "text-pink-400",
-            },
-            {
-              label: "On Flow",
-              value: nfts.length.toString(),
-              color: "text-green-400",
             },
           ].map((stat, index) => (
             <Card
@@ -286,6 +312,48 @@ export default function Gallery() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 bg-gray-800 border-gray-600 text-white"
                     />
+                  </div>
+                </div>
+
+                {/* Filter Buttons */}
+                <div className="flex items-center space-x-2">
+                  <div className="flex bg-gray-800 rounded-lg p-1">
+                    <Button
+                      variant={listingFilter === "all" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setListingFilter("all")}
+                      className={`${
+                        listingFilter === "all"
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-400 hover:text-white hover:bg-gray-700"
+                      }`}
+                    >
+                      All
+                    </Button>
+                    <Button
+                      variant={listingFilter === "owned" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setListingFilter("owned")}
+                      className={`${
+                        listingFilter === "owned"
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-400 hover:text-white hover:bg-gray-700"
+                      }`}
+                    >
+                      Owned
+                    </Button>
+                    <Button
+                      variant={listingFilter === "listed" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setListingFilter("listed")}
+                      className={`${
+                        listingFilter === "listed"
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-400 hover:text-white hover:bg-gray-700"
+                      }`}
+                    >
+                      Listed
+                    </Button>
                   </div>
                 </div>
 

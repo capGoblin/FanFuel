@@ -1,57 +1,63 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Metadata } from 'next';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-import LoadingSpinner from '@/components/ui/loading-spinner';
+import { useState } from "react";
+import { Metadata } from "next";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 
 const contactInfo = [
   {
     icon: Mail,
-    title: 'Email',
-    description: 'Send us an email anytime',
-    value: 'hello@modernweb.dev',
+    title: "Email",
+    description: "Send us an email anytime",
+    value: "hello@modernweb.dev",
   },
   {
     icon: Phone,
-    title: 'Phone',
-    description: 'Call us during business hours',
-    value: '+1 (555) 123-4567',
+    title: "Phone",
+    description: "Call us during business hours",
+    value: "+1 (555) 123-4567",
   },
   {
     icon: MapPin,
-    title: 'Office',
-    description: 'Visit our headquarters',
-    value: 'San Francisco, CA',
+    title: "Office",
+    description: "Visit our headquarters",
+    value: "San Francisco, CA",
   },
   {
     icon: Clock,
-    title: 'Hours',
-    description: 'Monday to Friday',
-    value: '9:00 AM - 6:00 PM PST',
+    title: "Hours",
+    description: "Monday to Friday",
+    value: "9:00 AM - 6:00 PM PST",
   },
 ];
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    service: '',
-    message: '',
+    name: "",
+    email: "",
+    company: "",
+    service: "",
+    message: "",
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,25 +65,27 @@ export default function Contact() {
     setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    toast.success('Message sent successfully! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', company: '', service: '', message: '' });
+    toast.success("Message sent successfully! We'll get back to you soon.");
+    setFormData({ name: "", email: "", company: "", service: "", message: "" });
     setIsSubmitting(false);
   };
 
   return (
     <div className="py-24">
-      <div className="container">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4">Get In Touch</Badge>
+          <Badge variant="secondary" className="mb-4">
+            Get In Touch
+          </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Let's Build Something Amazing Together
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Ready to transform your digital presence? We'd love to hear about your project 
-            and discuss how we can help you achieve your goals.
+            Ready to transform your digital presence? We'd love to hear about
+            your project and discuss how we can help you achieve your goals.
           </p>
         </div>
 
@@ -98,7 +106,9 @@ export default function Contact() {
                         <CardTitle className="text-lg">{info.title}</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-muted-foreground mb-1">{info.description}</p>
+                        <p className="text-sm text-muted-foreground mb-1">
+                          {info.description}
+                        </p>
                         <p className="font-semibold">{info.value}</p>
                       </CardContent>
                     </Card>
@@ -112,14 +122,18 @@ export default function Contact() {
               <h3 className="text-xl font-bold mb-6">Why Choose Us?</h3>
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { value: '< 24h', label: 'Response Time' },
-                  { value: '98%', label: 'Client Satisfaction' },
-                  { value: '5+', label: 'Years Experience' },
-                  { value: '500+', label: 'Projects Completed' },
+                  { value: "< 24h", label: "Response Time" },
+                  { value: "98%", label: "Client Satisfaction" },
+                  { value: "5+", label: "Years Experience" },
+                  { value: "500+", label: "Projects Completed" },
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-2xl font-bold text-primary mb-1">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                    <div className="text-2xl font-bold text-primary mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {stat.label}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -140,7 +154,9 @@ export default function Contact() {
                       id="name"
                       placeholder="John Doe"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -151,7 +167,9 @@ export default function Contact() {
                       type="email"
                       placeholder="john@example.com"
                       value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -163,23 +181,40 @@ export default function Contact() {
                     id="company"
                     placeholder="Your Company"
                     value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("company", e.target.value)
+                    }
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="service">Service Interested In</Label>
-                  <Select value={formData.service} onValueChange={(value) => handleInputChange('service', value)}>
+                  <Select
+                    value={formData.service}
+                    onValueChange={(value) =>
+                      handleInputChange("service", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a service" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="web-development">Web Development</SelectItem>
-                      <SelectItem value="mobile-development">Mobile Development</SelectItem>
+                      <SelectItem value="web-development">
+                        Web Development
+                      </SelectItem>
+                      <SelectItem value="mobile-development">
+                        Mobile Development
+                      </SelectItem>
                       <SelectItem value="ui-ux-design">UI/UX Design</SelectItem>
-                      <SelectItem value="performance-optimization">Performance Optimization</SelectItem>
-                      <SelectItem value="ecommerce">E-commerce Solutions</SelectItem>
-                      <SelectItem value="analytics-seo">Analytics & SEO</SelectItem>
+                      <SelectItem value="performance-optimization">
+                        Performance Optimization
+                      </SelectItem>
+                      <SelectItem value="ecommerce">
+                        E-commerce Solutions
+                      </SelectItem>
+                      <SelectItem value="analytics-seo">
+                        Analytics & SEO
+                      </SelectItem>
                       <SelectItem value="consulting">Consulting</SelectItem>
                     </SelectContent>
                   </Select>
@@ -192,12 +227,18 @@ export default function Contact() {
                     placeholder="Tell us about your project..."
                     rows={5}
                     value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("message", e.target.value)
+                    }
                     required
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <>
                       <LoadingSpinner size="sm" className="mr-2" />

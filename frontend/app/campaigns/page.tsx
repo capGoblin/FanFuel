@@ -36,7 +36,10 @@ export default function CampaignsPage() {
   const { campaigns, isLoading, error, refetch } = useCampaigns();
 
   // 👤 current user state
-  const [user, setUser] = useState<{ loggedIn: boolean | null; addr: string | null }>({
+  const [user, setUser] = useState<{
+    loggedIn: boolean | null;
+    addr: string | null;
+  }>({
     loggedIn: null,
     addr: null,
   });
@@ -135,7 +138,7 @@ export default function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
-      <div className="container py-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -238,24 +241,31 @@ export default function CampaignsPage() {
                     </div>
 
                     {/* Image layer (may hide itself on error) */}
-                    {campaign.imageURL && (() => {
-                      const displayUrl = campaign.imageURL.includes(".mypinata.cloud/ipfs/")
-                        ? campaign.imageURL.replace(/https?:\/\/[^/]+\/ipfs\/(.+)/, "https://gateway.pinata.cloud/ipfs/$1")
-                        : campaign.imageURL;
-                      return (
-                        <Image
-                          src={displayUrl}
-                          alt=""
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          onError={(e) => {
-                            const target = e.currentTarget as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                      );
-                    })()}
+                    {campaign.imageURL &&
+                      (() => {
+                        const displayUrl = campaign.imageURL.includes(
+                          ".mypinata.cloud/ipfs/"
+                        )
+                          ? campaign.imageURL.replace(
+                              /https?:\/\/[^/]+\/ipfs\/(.+)/,
+                              "https://gateway.pinata.cloud/ipfs/$1"
+                            )
+                          : campaign.imageURL;
+                        return (
+                          <Image
+                            src={displayUrl}
+                            alt=""
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            onError={(e) => {
+                              const target =
+                                e.currentTarget as HTMLImageElement;
+                              target.style.display = "none";
+                            }}
+                          />
+                        );
+                      })()}
                     <Badge className="absolute top-3 left-3 bg-gradient-to-r from-cyan-500 to-purple-500">
                       <Star className="mr-1 h-3 w-3" />
                       On Flow
@@ -320,7 +330,8 @@ export default function CampaignsPage() {
                             FLOW/NFT
                           </Badge>
                         </div>
-                        {user.addr?.toLowerCase() === campaign.creator.toLowerCase() ? (
+                        {user.addr?.toLowerCase() ===
+                        campaign.creator.toLowerCase() ? (
                           <Button
                             size="sm"
                             disabled={withdrawingId === campaign.id}

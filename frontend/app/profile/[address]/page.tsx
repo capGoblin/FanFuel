@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { ArrowLeft, Zap } from 'lucide-react';
-import { toast } from 'sonner';
-import * as fcl from '@onflow/fcl';
-import { useCampaigns } from '@/hooks/useCampaigns';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ProgressBar from '@/components/ui/progress-bar';
-import { Badge } from '@/components/ui/badge';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowLeft, Zap } from "lucide-react";
+import { toast } from "sonner";
+import * as fcl from "@onflow/fcl";
+import { useCampaigns } from "@/hooks/useCampaigns";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ProgressBar from "@/components/ui/progress-bar";
+import { Badge } from "@/components/ui/badge";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface ProfilePageProps {
   params: { address: string };
@@ -19,7 +19,10 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ params }: ProfilePageProps) {
   const { campaigns, isLoading, error, refetch } = useCampaigns();
-  const [user, setUser] = useState<{ loggedIn: boolean | null; addr: string | null }>({
+  const [user, setUser] = useState<{
+    loggedIn: boolean | null;
+    addr: string | null;
+  }>({
     loggedIn: null,
     addr: null,
   });
@@ -43,12 +46,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   // Handler to withdraw the next milestone payout
   const handleWithdraw = async (campaignId: string) => {
     if (!user.loggedIn || !user.addr) {
-      toast.error('Please connect your wallet first');
+      toast.error("Please connect your wallet first");
       return;
     }
 
     if (user.addr.toLowerCase() !== params.address.toLowerCase()) {
-      toast.error('You are not the creator of this profile');
+      toast.error("You are not the creator of this profile");
       return;
     }
 
@@ -88,7 +91,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       refetch();
     } catch (err) {
       console.error(err);
-      toast.error('Withdrawal failed. Ensure enough funds are available.');
+      toast.error("Withdrawal failed. Ensure enough funds are available.");
     } finally {
       setWithdrawingId(null);
     }
@@ -116,7 +119,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
-      <div className="container py-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -160,10 +163,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {userCampaigns.map((campaign, index) => {
               const totalMilestones = campaign.milestones.length;
-              const milestonesClaimed = parseInt(campaign.milestonesClaimed || '0');
+              const milestonesClaimed = parseInt(
+                campaign.milestonesClaimed || "0"
+              );
               const fundingProgress =
                 (parseFloat(campaign.fundedAmount) /
-                  parseFloat(campaign.goalAmount)) * 100;
+                  parseFloat(campaign.goalAmount)) *
+                100;
               const canWithdraw =
                 user.addr?.toLowerCase() === params.address.toLowerCase() &&
                 milestonesClaimed < totalMilestones;
@@ -191,11 +197,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
                       <div className="flex justify-between text-sm text-gray-400">
                         <span>
-                          {parseFloat(campaign.fundedAmount).toFixed(2)} /{' '}
+                          {parseFloat(campaign.fundedAmount).toFixed(2)} /{" "}
                           {parseFloat(campaign.goalAmount).toFixed(2)} FLOW
                         </span>
                         <span>
-                          {milestonesClaimed}/{totalMilestones} milestones claimed
+                          {milestonesClaimed}/{totalMilestones} milestones
+                          claimed
                         </span>
                       </div>
 
@@ -209,7 +216,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                           {isWithdrawing ? (
                             <LoadingSpinner size="sm" />
                           ) : (
-                            'Withdraw Next Milestone'
+                            "Withdraw Next Milestone"
                           )}
                         </Button>
                       ) : (
@@ -218,8 +225,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                           className="w-full text-center"
                         >
                           {milestonesClaimed >= totalMilestones
-                            ? 'All milestones claimed'
-                            : 'Milestone not yet claimable'}
+                            ? "All milestones claimed"
+                            : "Milestone not yet claimable"}
                         </Badge>
                       )}
                     </CardContent>

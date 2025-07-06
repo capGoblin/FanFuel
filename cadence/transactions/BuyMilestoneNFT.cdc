@@ -1,0 +1,57 @@
+import NFTStorefrontV2 from "NFTStorefrontV2"
+import FlowToken        from "FlowToken"
+import FungibleToken    from "FungibleToken"
+import MilestoneNFT     from "MilestoneNFT"
+import NonFungibleToken from "NonFungibleToken"
+
+/// Purchases a listing from a seller's StorefrontV2 and deposits the NFT into buyer's collection.
+///
+/// Parameters:
+/// - `seller`     : Address of the seller (owner of the storefront)
+/// - `listingID`  : ID of the Listing resource in the seller's storefront
+/// - `price`      : Expected sale price (FLOW) – used as safety check
+transaction(seller: Address, listingID: UInt64, price: UFix64) {
+    prepare(buyer: auth(Storage, Capabilities) &Account) {
+        // 1️⃣ Borrow the seller's storefront public capability
+        let storefront = getAccount(seller)
+            .capabilities.get<&{NFTStorefrontV2.StorefrontPublic}>(NFTStorefrontV2.StorefrontPublicPath)
+            .borrow()
+            ?? panic("Seller has no storefront")
+
+        // 2️⃣ Borrow the listing
+        let listing = storefront.borrowListing(listingResourceID: listingID)
+            ?? panic("Listing not found")
+
+        // Optional safety check on price
+        let details = listing.getDetails()
+        assert(details.salePrice == price, message: "Price mismatch")
+
+        // 3️⃣ Withdraw FlowToken payment from buyer
+        let vaultRef = buyer.storage.borrow<auth(FungibleToken.Withdraw) & FlowToken.Vault>(from: /storage/flowTokenVault)
+            ?? panic("Missing FlowToken vault")
+        let payment <- vaultRef.withdraw(amount: price)
+
+        // 4️⃣ Ensure buyer has MilestoneNFT collection – create if absent
+        if buyer.storage.borrow<&MilestoneNFT.Collection>(from: MilestoneNFT.CollectionStoragePath) == nil {
+            let collection <- MilestoneNFT.createEmptyCollection(nftType: Type<@MilestoneNFT.NFT>())
+            buyer.storage.save(<-collection, to: MilestoneNFT.CollectionStoragePath)
+            buyer.capabilities.publish(
+                buyer.capabilities.storage.issue<&{NonFungibleToken.Collection}>(MilestoneNFT.CollectionStoragePath),
+                at: MilestoneNFT.CollectionPublicPath
+            )
+        }
+
+        let collectionRef = buyer.storage.borrow<&{NonFungibleToken.Collection}>(from: MilestoneNFT.CollectionStoragePath)
+            ?? panic("Could not borrow NFT collection")
+
+        // 5️⃣ Purchase the NFT (no commission recipient)
+        let purchased <- listing.purchase(payment: <- payment, commissionRecipient: nil)
+
+        // Deposit into buyer's collection
+        collectionRef.deposit(token: <- purchased)
+    }
+
+    execute {
+        log("✅ Purchased listing ".concat(listingID.toString()).concat(" from ").concat(seller.toString()))
+    }
+} 

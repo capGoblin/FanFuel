@@ -1,10 +1,16 @@
-import Link from 'next/link';
-import { Zap, Github, Twitter, MessageCircle, ExternalLink } from 'lucide-react';
+import Link from "next/link";
+import {
+  Zap,
+  Github,
+  Twitter,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
 
 export default function Footer() {
   return (
     <footer className="border-t border-gray-800 bg-gray-900">
-      <div className="container py-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
@@ -19,7 +25,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-gray-400">
-              Empowering creators through milestone-based campaigns and exclusive NFT rewards.
+              Empowering creators through milestone-based campaigns and
+              exclusive NFT rewards.
             </p>
           </div>
 
@@ -27,17 +34,34 @@ export default function Footer() {
             <h3 className="font-semibold text-white">Platform</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/campaigns" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <Link
+                  href="/campaigns"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   Explore Campaigns
                 </Link>
               </li>
               <li>
-                <Link href="/create-campaign" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <Link
+                  href="/marketplace"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
+                  NFT Marketplace
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/create-campaign"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   Launch Campaign
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <Link
+                  href="/gallery"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   NFT Gallery
                 </Link>
               </li>
@@ -48,23 +72,35 @@ export default function Footer() {
             <h3 className="font-semibold text-white">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <Link
+                  href="/about"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="https://flow.com" className="text-gray-400 hover:text-purple-400 transition-colors flex items-center">
+                <a
+                  href="https://flow.com"
+                  className="text-gray-400 hover:text-purple-400 transition-colors flex items-center"
+                >
                   Flow Blockchain
                   <ExternalLink className="ml-1 h-3 w-3" />
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
                   FCL Integration
                 </a>
               </li>
@@ -74,15 +110,24 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white">Community</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
+              >
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
+              >
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
+              >
                 <MessageCircle className="h-5 w-5" />
                 <span className="sr-only">Discord</span>
               </a>

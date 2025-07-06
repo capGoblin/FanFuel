@@ -1,44 +1,56 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Play, Star, Zap, Users, TrendingUp, Target, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import GlowButton from '@/components/ui/glow-button';
-import ProgressBar from '@/components/ui/progress-bar';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Play,
+  Star,
+  Zap,
+  Users,
+  TrendingUp,
+  Target,
+  Sparkles,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import GlowButton from "@/components/ui/glow-button";
+import ProgressBar from "@/components/ui/progress-bar";
+import Link from "next/link";
+import Image from "next/image";
 
 // Mock featured campaigns
 const featuredCampaigns = [
   {
-    id: '1',
-    title: 'Cosmic Dreams: Music Journey',
-    creator: 'Luna Starweaver',
-    image: 'https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600',
+    id: "1",
+    title: "Cosmic Dreams: Music Journey",
+    creator: "Luna Starweaver",
+    image:
+      "https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600",
     currentAmount: 2847,
     targetAmount: 5000,
-    category: 'Music',
+    category: "Music",
   },
   {
-    id: '2',
-    title: 'Digital Art Revolution',
-    creator: 'CyberArtist',
-    image: 'https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600',
+    id: "2",
+    title: "Digital Art Revolution",
+    creator: "CyberArtist",
+    image:
+      "https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600",
     currentAmount: 1200,
     targetAmount: 3000,
-    category: 'Art',
+    category: "Art",
   },
   {
-    id: '3',
-    title: 'Indie Game Development',
-    creator: 'GameDev Studio',
-    image: 'https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600',
+    id: "3",
+    title: "Indie Game Development",
+    creator: "GameDev Studio",
+    image:
+      "https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=600",
     currentAmount: 4500,
     targetAmount: 8000,
-    category: 'Gaming',
+    category: "Gaming",
   },
 ];
 
@@ -60,7 +72,7 @@ export default function HomePage() {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-500/5 rounded-full blur-3xl animate-pulse delay-500" />
         </div>
 
-        <div className="container relative z-10">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -74,7 +86,10 @@ export default function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <Badge variant="secondary" className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
+                  <Badge
+                    variant="secondary"
+                    className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30"
+                  >
                     <span className="flex items-center">
                       <Star className="h-3 w-3 mr-1" />
                       The Future of Fan Support
@@ -92,9 +107,7 @@ export default function HomePage() {
                     Fuel Your
                   </span>
                   <br />
-                  <span className="text-white">
-                    Favorite Creators
-                  </span>
+                  <span className="text-white">Favorite Creators</span>
                 </motion.h1>
 
                 <motion.p
@@ -103,8 +116,9 @@ export default function HomePage() {
                   transition={{ delay: 0.4 }}
                   className="text-xl text-gray-300 leading-relaxed max-w-2xl"
                 >
-                  Support creators through milestone-based campaigns and earn exclusive NFTs as they achieve their goals. 
-                  On-chain transparency meets real creative impact.
+                  Support creators through milestone-based campaigns and earn
+                  exclusive NFTs as they achieve their goals. On-chain
+                  transparency meets real creative impact.
                 </motion.p>
               </div>
 
@@ -123,8 +137,12 @@ export default function HomePage() {
                     </span>
                   </Link>
                 </GlowButton>
-                
-                <Button variant="outline" size="lg" className="group border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800 text-lg px-8 py-4">
+
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="group border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800 text-lg px-8 py-4"
+                >
                   <span className="flex items-center">
                     <Play className="mr-2 h-5 w-5" />
                     Watch Demo
@@ -143,10 +161,12 @@ export default function HomePage() {
                   <span>Live on Flow</span>
                 </div>
                 <div>
-                  <span className="font-semibold text-white">125K+</span> FLOW Raised
+                  <span className="font-semibold text-white">125K+</span> FLOW
+                  Raised
                 </div>
                 <div>
-                  <span className="font-semibold text-white">1.2K+</span> NFTs Minted
+                  <span className="font-semibold text-white">1.2K+</span> NFTs
+                  Minted
                 </div>
               </motion.div>
             </motion.div>
@@ -168,9 +188,14 @@ export default function HomePage() {
                         <div className="h-3 w-3 bg-yellow-500 rounded-full"></div>
                         <div className="h-3 w-3 bg-green-500 rounded-full"></div>
                       </div>
-                      <Badge variant="outline" className="border-purple-500/30 text-purple-300">Live Campaign</Badge>
+                      <Badge
+                        variant="outline"
+                        className="border-purple-500/30 text-purple-300"
+                      >
+                        Live Campaign
+                      </Badge>
                     </div>
-                    
+
                     <div className="space-y-4">
                       <div className="h-6 bg-gradient-to-r from-purple-500 to-cyan-500 rounded w-3/4"></div>
                       <div className="h-4 bg-gray-700 rounded w-1/2"></div>
@@ -180,7 +205,7 @@ export default function HomePage() {
                         <span>156 supporters</span>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div className="h-24 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-500/30"></div>
                       <div className="h-24 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg border border-cyan-500/30"></div>
@@ -195,44 +220,50 @@ export default function HomePage() {
 
       {/* How It Works Section */}
       <section className="py-24 bg-gray-900/50">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className="mb-4">How It Works</Badge>
+            <Badge variant="secondary" className="mb-4">
+              How It Works
+            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Three Simple Steps to Success
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              A revolutionary approach to creator funding that benefits everyone involved
+              A revolutionary approach to creator funding that benefits everyone
+              involved
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                step: '01',
-                title: 'Creators Launch Campaigns',
-                description: 'Set milestones, define rewards, and share your vision with the world',
+                step: "01",
+                title: "Creators Launch Campaigns",
+                description:
+                  "Set milestones, define rewards, and share your vision with the world",
                 icon: Target,
-                color: 'from-purple-500 to-pink-500',
+                color: "from-purple-500 to-pink-500",
               },
               {
-                step: '02',
-                title: 'Fans Mint Milestone NFTs',
-                description: 'Support creators by minting exclusive NFTs tied to campaign milestones',
+                step: "02",
+                title: "Fans Mint Milestone NFTs",
+                description:
+                  "Support creators by minting exclusive NFTs tied to campaign milestones",
                 icon: Zap,
-                color: 'from-pink-500 to-cyan-500',
+                color: "from-pink-500 to-cyan-500",
               },
               {
-                step: '03',
-                title: 'Everyone Wins',
-                description: 'Creators get funded, fans get exclusive content and NFTs with real utility',
+                step: "03",
+                title: "Everyone Wins",
+                description:
+                  "Creators get funded, fans get exclusive content and NFTs with real utility",
                 icon: Users,
-                color: 'from-cyan-500 to-purple-500',
+                color: "from-cyan-500 to-purple-500",
               },
             ].map((step, index) => {
               const Icon = step.icon;
@@ -247,16 +278,24 @@ export default function HomePage() {
                 >
                   <Card className="bg-gray-900/50 border-gray-700/50 backdrop-blur-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 h-full">
                     <CardContent className="p-8 text-center">
-                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${step.color} mb-6`}>
+                      <div
+                        className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${step.color} mb-6`}
+                      >
                         <Icon className="h-8 w-8 text-white" />
                       </div>
-                      
-                      <div className="text-4xl font-bold text-gray-600 mb-4">{step.step}</div>
-                      <h3 className="text-xl font-bold text-white mb-4">{step.title}</h3>
-                      <p className="text-gray-400 leading-relaxed">{step.description}</p>
+
+                      <div className="text-4xl font-bold text-gray-600 mb-4">
+                        {step.step}
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-4">
+                        {step.title}
+                      </h3>
+                      <p className="text-gray-400 leading-relaxed">
+                        {step.description}
+                      </p>
                     </CardContent>
                   </Card>
-                  
+
                   {index < 2 && (
                     <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                       <ArrowRight className="h-8 w-8 text-gray-600" />
@@ -271,14 +310,16 @@ export default function HomePage() {
 
       {/* Featured Campaigns */}
       <section className="py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className="mb-4">Featured Campaigns</Badge>
+            <Badge variant="secondary" className="mb-4">
+              Featured Campaigns
+            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Trending Projects
             </h2>
@@ -313,14 +354,20 @@ export default function HomePage() {
                       </Badge>
                     </div>
                   </div>
-                  
+
                   <CardContent className="p-6">
-                    <h3 className="font-bold text-white text-lg mb-2">{campaign.title}</h3>
-                    <p className="text-gray-400 text-sm mb-4">by {campaign.creator}</p>
-                    
+                    <h3 className="font-bold text-white text-lg mb-2">
+                      {campaign.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      by {campaign.creator}
+                    </p>
+
                     <div className="space-y-3">
-                      <ProgressBar 
-                        progress={(campaign.currentAmount / campaign.targetAmount) * 100}
+                      <ProgressBar
+                        progress={
+                          (campaign.currentAmount / campaign.targetAmount) * 100
+                        }
                         showPercentage={false}
                         size="sm"
                       />
@@ -359,7 +406,7 @@ export default function HomePage() {
 
       {/* Testimonial */}
       <section className="py-24 bg-gray-900/50">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -369,11 +416,12 @@ export default function HomePage() {
             <div className="mb-8">
               <div className="text-6xl text-purple-400 mb-4">"</div>
               <blockquote className="text-2xl md:text-3xl font-medium text-white leading-relaxed">
-                FanFuel has revolutionized how I connect with my audience. The milestone-based approach 
-                keeps me motivated and my fans engaged throughout the entire creative process.
+                FanFuel has revolutionized how I connect with my audience. The
+                milestone-based approach keeps me motivated and my fans engaged
+                throughout the entire creative process.
               </blockquote>
             </div>
-            
+
             <div className="flex items-center justify-center space-x-4">
               <Image
                 src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400"
@@ -393,7 +441,7 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section className="py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -406,9 +454,10 @@ export default function HomePage() {
                   Ready to Launch Your Campaign?
                 </h2>
                 <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                  Join thousands of creators who are already using FanFuel to bring their visions to life
+                  Join thousands of creators who are already using FanFuel to
+                  bring their visions to life
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <GlowButton asChild className="text-lg px-8 py-4">
                     <Link href="/create-campaign">
@@ -418,8 +467,12 @@ export default function HomePage() {
                       </span>
                     </Link>
                   </GlowButton>
-                  
-                  <Button variant="outline" size="lg" className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800 text-lg px-8 py-4">
+
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800 text-lg px-8 py-4"
+                  >
                     Learn More
                   </Button>
                 </div>
