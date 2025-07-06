@@ -5,15 +5,13 @@ import * as fcl from "@onflow/fcl";
 
 // Cadence transaction to create a campaign
 const CREATE_CAMPAIGN_TRANSACTION = `
-import CampaignManager from 0xcc3f81c625b55c77
+import CampaignManager from 0xCampaignManager
 
 transaction(title: String, description: String, imageURL: String, goalAmount: UFix64, milestones: [String], totalNFTs: UInt64) {
     prepare(signer: auth(Storage) &Account) {
-        // No preparation needed
-    }
-    
-    execute {
+        // Call the contract directly in prepare so we have access to signer.address
         CampaignManager.createCampaign(
+            creator: signer.address,
             title: title,
             description: description,
             imageURL: imageURL,
@@ -21,6 +19,10 @@ transaction(title: String, description: String, imageURL: String, goalAmount: UF
             milestones: milestones,
             totalNFTs: totalNFTs
         )
+    }
+    
+    execute {
+        log("Campaign created via frontend transaction ✨")
     }
 }
 `;

@@ -5,7 +5,7 @@ import * as fcl from "@onflow/fcl";
 
 const CHECK_COLLECTION_SCRIPT = `
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import MilestoneNFT from 0xcc3f81c625b55c77
+import MilestoneNFT from 0xMilestoneNFT
 
 access(all) fun main(account: Address): Bool {
     let collectionRef = getAccount(account)

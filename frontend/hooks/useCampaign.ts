@@ -12,6 +12,8 @@ interface Campaign {
   totalNFTs: string;
   fundedAmount: string;
   nftsMinted: string;
+  imageURL?: string;
+  milestonesClaimed?: string;
 }
 
 interface UseCampaignResult {
@@ -40,10 +42,7 @@ export function useCampaign(campaignId: string | null): UseCampaignResult {
         import CampaignManager from 0xCampaignManager
 
         access(all) fun main(campaignID: UInt64): CampaignManager.Campaign? {
-            let campaignManagerRef = getAccount(0xCampaignManager).contracts.borrow<&CampaignManager>(name: "CampaignManager")
-                ?? panic("Could not borrow CampaignManager contract reference")
-            
-            return campaignManagerRef.getCampaign(id: campaignID)
+            return CampaignManager.getCampaign(id: campaignID)
         }
       `;
 
@@ -63,6 +62,8 @@ export function useCampaign(campaignId: string | null): UseCampaignResult {
           totalNFTs: result.totalNFTs.toString(),
           fundedAmount: result.fundedAmount,
           nftsMinted: result.nftsMinted.toString(),
+          imageURL: result.imageURL,
+          milestonesClaimed: result.milestonesClaimed,
         });
       } else {
         setError("Campaign not found");

@@ -23,6 +23,8 @@ export interface Campaign {
   totalNFTs: string;
   fundedAmount: string;
   nftsMinted: string;
+  imageURL?: string;
+  milestonesClaimed?: string;
 }
 
 export function useCampaigns() {
@@ -50,8 +52,12 @@ export function useCampaigns() {
             totalNFTs: campaign.totalNFTs,
             fundedAmount: campaign.fundedAmount,
             nftsMinted: campaign.nftsMinted,
+            imageURL: campaign.imageURL,
+            milestonesClaimed: campaign.milestonesClaimed,
           }))
         : [];
+
+      console.log(transformedCampaigns);
 
       setCampaigns(transformedCampaigns);
     } catch (err) {

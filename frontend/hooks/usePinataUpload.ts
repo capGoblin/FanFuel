@@ -58,7 +58,7 @@ export function usePinataUpload(): UsePinataUploadResult {
         .NEXT_PUBLIC_PINATA_GATEWAY!}/ipfs/${upload.cid}`;
 
       setProgress(100);
-
+      console.log(ipfsUrl);
       return ipfsUrl;
     } catch (err) {
       console.error("Error uploading to Pinata:", err);
@@ -94,7 +94,7 @@ export function optimizePinataImage(
 
   // Extract the CID from the URL
   const cid = ipfsUrl.split("ipfs/")[1];
-  const gateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY!;
+  const gateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY || "olive-tough-beetle-615.mypinata.cloud";
 
   // Build optimized URL
   let optimizedUrl = `https://${gateway}/ipfs/${cid}`;

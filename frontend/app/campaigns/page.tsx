@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -23,6 +23,8 @@ import { useCampaigns } from "@/hooks/useCampaigns";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import * as fcl from "@onflow/fcl";
+import { toast } from "sonner";
 
 const categories = ["All", "Music", "Art", "Gaming", "Tech", "Film", "Fashion"];
 const sortOptions = ["Latest", "Most Funded", "Ending Soon", "Most Backers"];
@@ -32,6 +34,73 @@ export default function CampaignsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
   const { campaigns, isLoading, error, refetch } = useCampaigns();
+
+  // 👤 current user state
+  const [user, setUser] = useState<{ loggedIn: boolean | null; addr: string | null }>({
+    loggedIn: null,
+    addr: null,
+  });
+  const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsub = fcl.currentUser.subscribe(setUser);
+    return () => unsub();
+  }, []);
+
+  // 🚀 withdraw handler
+  const handleWithdraw = async (campaignId: string) => {
+    if (!user.loggedIn || !user.addr) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    setWithdrawingId(campaignId);
+
+    const tx = `
+      import FungibleToken from 0xFungibleToken
+      import FlowToken from 0xFlowToken
+      import CampaignManager from 0xCampaignManager
+
+      transaction(campaignID: UInt64) {
+        prepare(acct: auth(Storage) &Account) {
+          let cap = acct.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+          CampaignManager.withdrawNextMilestone(
+            campaignID: campaignID,
+            recipientCap: cap
+          )
+        }
+      }
+    `;
+
+    try {
+      const txId = await fcl.mutate({
+        cadence: tx,
+        args: (arg, t) => [arg(campaignId, t.UInt64)],
+        proposer: fcl.authz,
+        payer: fcl.authz,
+        authorizations: [fcl.authz],
+        limit: 1000,
+      });
+
+      await fcl.tx(txId).onceSealed();
+      toast.success("Milestone withdrawn ✨");
+      refetch();
+    } catch (err) {
+      console.error(err);
+      const raw = err instanceof Error ? err.message : String(err);
+      let msg = "Withdrawal failed";
+      if (raw.includes("Not enough funds collected")) {
+        msg = "Not enough funds collected for the next milestone yet.";
+      } else if (raw.includes("All milestones already claimed")) {
+        msg = "All milestones for this campaign have already been claimed.";
+      } else if (raw.includes("Recipient must be the campaign creator")) {
+        msg = "Only the campaign creator can withdraw milestones.";
+      }
+      toast.error(msg);
+    } finally {
+      setWithdrawingId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -251,16 +320,31 @@ export default function CampaignsPage() {
                             FLOW/NFT
                           </Badge>
                         </div>
-                        <Button
-                          size="sm"
-                          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                          asChild
-                        >
-                          <Link href={`/campaign/${campaign.id}`}>
-                            <ArrowRight className="mr-1 h-4 w-4" />
-                            View
-                          </Link>
-                        </Button>
+                        {user.addr?.toLowerCase() === campaign.creator.toLowerCase() ? (
+                          <Button
+                            size="sm"
+                            disabled={withdrawingId === campaign.id}
+                            onClick={() => handleWithdraw(campaign.id)}
+                            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                          >
+                            {withdrawingId === campaign.id ? (
+                              <LoadingSpinner size="sm" />
+                            ) : (
+                              "Withdraw Milestone"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                            asChild
+                          >
+                            <Link href={`/campaign/${campaign.id}`}>
+                              <ArrowRight className="mr-1 h-4 w-4" />
+                              View
+                            </Link>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>

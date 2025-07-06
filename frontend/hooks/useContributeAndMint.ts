@@ -31,11 +31,15 @@ export function useContributeAndMint(): UseContributeAndMintResult {
         /// The signer must be the contributor.
         transaction(campaignID: UInt64, amount: UFix64) {
             prepare(acct: auth(Storage, BorrowValue) &Account) {
-                // 1️⃣ Ensure the signer has a MilestoneNFT.Collection stored
-                if acct.storage.borrow<&MilestoneNFT.Collection>(from: MilestoneNFT.CollectionStoragePath) == nil {
-                    let collection <- MilestoneNFT.createEmptyCollection(nftType: Type<@MilestoneNFT.NFT>())
-                    acct.storage.save(<-collection, to: MilestoneNFT.CollectionStoragePath)
+                // 1️⃣ Ensure the signer has a fresh MilestoneNFT.Collection stored
+                if acct.storage.borrow<&AnyResource>(from: MilestoneNFT.CollectionStoragePath) != nil {
+                    let old <- acct.storage.load<@AnyResource>(from: MilestoneNFT.CollectionStoragePath)!
+                    destroy old
                 }
+
+                // Now store a fresh collection for the current MilestoneNFT contract
+                let collection <- MilestoneNFT.createEmptyCollection(nftType: Type<@MilestoneNFT.NFT>())
+                acct.storage.save(<-collection, to: MilestoneNFT.CollectionStoragePath)
 
                 // Collection acts as an NFT receiver
                 let receiverRef = acct.storage.borrow<&MilestoneNFT.Collection>(from: MilestoneNFT.CollectionStoragePath)
