@@ -1,4 +1,4 @@
-# FanFuel – Crowdfund & Reward Creators with Flow NFTs
+# FanFuel – Fuel Creators with Royalties & Flow NFTs
 
 **FanFuel** empowers creators to launch **milestone-driven NFT campaigns**—where they not only raise funds but  **also earn royalties on every future resale** through Flow’s powerful [`NFTStorefrontV2`](https://developers.flow.com/build/core-contracts/nft-storefront). Creators can also offer **exclusive perks and loyalty rewards** to NFT-holding fans, turning early backers into long-term supporters and community champions.
 
@@ -44,7 +44,7 @@
 | Fan / Backer       | `0xb220abcf3acfcf20` |   [Fan](https://testnet.flowscan.io/account/b220abcf3acfcf20)                                                                                                                                            |
 | Buyer / Collector  | `0x564712122b35cfff` | [Buyer](https://testnet.flowscan.io/account/564712122b35cfff)                                                                                                 | 
 
-Watch the full flow in action in our demo video → [YouTube](https://www.youtube.com/watch?v=zBuIca5tBTk).
+Watch the full flow in action in our demo video → [YouTube](https://youtu.be/qjoa0YGSHYA).
 
 ---
 
